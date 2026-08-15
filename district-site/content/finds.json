@@ -1,0 +1,52 @@
+{
+  "items": [
+    {
+      "photo": "",
+      "category": "Men's denim",
+      "name": "Straight-leg five-pocket jean",
+      "compare": "$69.50",
+      "price": "$24.99",
+      "off": "64% off"
+    },
+    {
+      "photo": "",
+      "category": "Women's dresses",
+      "name": "Cotton midi dress",
+      "compare": "$58.00",
+      "price": "$19.99",
+      "off": "65% off"
+    },
+    {
+      "photo": "",
+      "category": "Kids' shoes",
+      "name": "Lace-up school sneaker",
+      "compare": "$45.00",
+      "price": "$16.99",
+      "off": "62% off"
+    },
+    {
+      "photo": "",
+      "category": "Home & bath",
+      "name": "Cotton towel set",
+      "compare": "$39.99",
+      "price": "$12.99",
+      "off": "67% off"
+    },
+    {
+      "photo": "",
+      "category": "Bags",
+      "name": "Crossbody handbag",
+      "compare": "$52.00",
+      "price": "$18.99",
+      "off": "63% off"
+    },
+    {
+      "photo": "",
+      "category": "Men's tops",
+      "name": "Short-sleeve button-down",
+      "compare": "$44.00",
+      "price": "$14.99",
+      "off": "66% off"
+    }
+  ]
+}

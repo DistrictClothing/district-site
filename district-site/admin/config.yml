@@ -1,0 +1,109 @@
+# ============================================================
+#  DISTRICT CLOTHING AND MORE — admin panel config
+#
+#  YOU MUST EDIT 3 LINES BELOW before this works.
+#  They are marked  <<< CHANGE THIS
+#  DecapBridge gives you all three values when you sign up.
+# ============================================================
+
+backend:
+  name: git-gateway
+  repo: YOURNAME/district-site                                   # <<< CHANGE THIS
+  branch: main
+  identity_url: https://auth.decapbridge.com/sites/YOUR-SITE-ID  # <<< CHANGE THIS
+  gateway_url: https://gateway.decapbridge.com                   # <<< CHANGE THIS (usually leave as-is)
+  commit_messages:
+    create: 'Add {{collection}} — {{author-name}}'
+    update: 'Update {{collection}} — {{author-name}}'
+    delete: 'Remove {{collection}} — {{author-name}}'
+    uploadMedia: 'Add photo {{path}} — {{author-name}}'
+    deleteMedia: 'Remove photo {{path}} — {{author-name}}'
+
+# Where uploaded photos are saved
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+site_url: https://district-clothing.com
+logo_url: https://decapbridge.com/decapcms-with-bridge.svg
+
+collections:
+
+  # ---------- THIS WEEK'S FINDS ----------
+  - name: "finds"
+    label: "This Week's Finds"
+    files:
+      - name: "finds"
+        label: "Finds on the floor"
+        file: "content/finds.json"
+        description: "Add, edit, reorder or delete the items shown on the website. Drag the ≡ handle to reorder."
+        fields:
+          - label: "Items"
+            name: "items"
+            widget: "list"
+            label_singular: "Item"
+            summary: "{{fields.name}} — {{fields.price}}"
+            fields:
+              - label: "Photo"
+                name: "photo"
+                widget: "image"
+                required: false
+                hint: "Hold your phone upright when you shoot. Leave blank to show a placeholder."
+              - label: "Department"
+                name: "category"
+                widget: "string"
+                hint: "e.g. Women's dresses, Kids' shoes, Home & bath"
+              - label: "Item name"
+                name: "name"
+                widget: "string"
+                hint: "e.g. Cotton midi dress"
+              - label: "Compare at price"
+                name: "compare"
+                widget: "string"
+                required: false
+                hint: "What it sells for elsewhere. Include the $. Leave blank to hide."
+              - label: "Our price"
+                name: "price"
+                widget: "string"
+                hint: "Include the $, e.g. $19.99"
+              - label: "Percent off badge"
+                name: "off"
+                widget: "string"
+                required: false
+                hint: "e.g. 65% off. Leave blank to hide the pink badge."
+
+  # ---------- SITE SETTINGS ----------
+  - name: "settings"
+    label: "Site Settings"
+    files:
+      - name: "settings"
+        label: "Banner, links & contact"
+        file: "content/settings.json"
+        description: "Controls the diagonal ribbon, your Whatnot link, and contact details."
+        fields:
+          - label: "Show the diagonal ribbon"
+            name: "ribbon_on"
+            widget: "boolean"
+            default: true
+            hint: "Turn this OFF the day you open."
+          - label: "Ribbon text"
+            name: "ribbon_text"
+            widget: "string"
+            default: "Opening Fall 2026"
+          - label: "Banner line under the logo"
+            name: "eyebrow"
+            widget: "string"
+            default: "New arrivals every week"
+          - label: "Whatnot profile link"
+            name: "whatnot_url"
+            widget: "string"
+            required: false
+            hint: "Full link, e.g. https://www.whatnot.com/user/yourhandle"
+          - label: "Contact email"
+            name: "email"
+            widget: "string"
+            required: false
+          - label: "Phone number"
+            name: "phone"
+            widget: "string"
+            required: false
+            hint: "Leave blank to hide it from the site."
