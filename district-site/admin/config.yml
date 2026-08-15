@@ -1,30 +1,28 @@
 # ============================================================
 #  DISTRICT CLOTHING AND MORE — admin panel config
-#
-#  YOU MUST EDIT 3 LINES BELOW before this works.
-#  They are marked  <<< CHANGE THIS
-#  DecapBridge gives you all three values when you sign up.
+#  Ready to use. No edits needed.
 # ============================================================
 
 backend:
   name: git-gateway
-  repo: YOURNAME/district-site                                   # <<< CHANGE THIS
+  repo: DistrictClothing/district-site
   branch: main
-  identity_url: https://auth.decapbridge.com/sites/YOUR-SITE-ID  # <<< CHANGE THIS
-  gateway_url: https://gateway.decapbridge.com                   # <<< CHANGE THIS (usually leave as-is)
+  identity_url: https://auth.decapbridge.com/sites/8390ad14-8ecd-436c-942f-d38b01c4546c
+  gateway_url: https://gateway.decapbridge.com
   commit_messages:
-    create: 'Add {{collection}} — {{author-name}}'
-    update: 'Update {{collection}} — {{author-name}}'
-    delete: 'Remove {{collection}} — {{author-name}}'
-    uploadMedia: 'Add photo {{path}} — {{author-name}}'
-    deleteMedia: 'Remove photo {{path}} — {{author-name}}'
+    create: 'Add {{collection}} "{{slug}}" - {{author-name}} via DecapBridge'
+    update: 'Update {{collection}} "{{slug}}" - {{author-name}} via DecapBridge'
+    delete: 'Delete {{collection}} "{{slug}}" - {{author-name}} via DecapBridge'
+    uploadMedia: 'Upload "{{path}}" - {{author-name}} via DecapBridge'
+    deleteMedia: 'Delete "{{path}}" - {{author-name}} via DecapBridge'
+    openAuthoring: 'Message {{message}} - {{author-name}} via DecapBridge'
+
+logo_url: https://decapbridge.com/decapcms-with-bridge.svg
+site_url: https://district-clothing.com
 
 # Where uploaded photos are saved
-media_folder: "images/uploads"
+media_folder: "district-site/images/uploads"
 public_folder: "/images/uploads"
-
-site_url: https://district-clothing.com
-logo_url: https://decapbridge.com/decapcms-with-bridge.svg
 
 collections:
 
@@ -34,8 +32,8 @@ collections:
     files:
       - name: "finds"
         label: "Finds on the floor"
-        file: "content/finds.json"
-        description: "Add, edit, reorder or delete the items shown on the website. Drag the ≡ handle to reorder."
+        file: "district-site/content/finds.json"
+        description: "Add, edit, reorder or delete the items shown on the website. Drag to reorder."
         fields:
           - label: "Items"
             name: "items"
@@ -77,7 +75,7 @@ collections:
     files:
       - name: "settings"
         label: "Banner, links & contact"
-        file: "content/settings.json"
+        file: "district-site/content/settings.json"
         description: "Controls the diagonal ribbon, your Whatnot link, and contact details."
         fields:
           - label: "Show the diagonal ribbon"
