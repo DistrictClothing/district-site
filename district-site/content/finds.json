@@ -44,7 +44,8 @@
       "photo": "/images/uploads/gemini_generated_image_5jml5a5jml5a5jml-1-.jpg",
       "category": "Men's Hoodies",
       "name": "Graphic Hoodies",
-      "price": "19.99"
+      "price": "19.99",
+      "compare": "29.99"
     }
   ]
 }
