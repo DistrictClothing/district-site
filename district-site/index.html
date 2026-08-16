@@ -321,8 +321,8 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
       <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>
       <span id="eyebrow">New arrivals every week</span>
     </div>
-    <h1>The same brands. <em>Not</em> the same price.</h1>
-    <p class="hero-sub">Apparel, shoes, home and beauty at 20–70% off department store prices. New freight every week, one floor, and no two visits the same.</p>
+    <h1 id="heroHeadline">The same brands. <em>Not</em> the same price.</h1>
+    <p class="hero-sub" id="heroSub">Apparel, shoes, home and beauty at 20–70% off department store prices. New freight every week, one floor, and no two visits the same.</p>
     <div class="hero-meta">
       <a class="chip fill" href="#store">Store &amp; hours</a>
       <a class="chip" href="#deals">See this week's finds</a>
@@ -384,12 +384,12 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
       <div>
         <h2>Find us</h2>
         <p class="addr">
-          5524 W Colonial Drive, Suite A<br>
-          Orlando, FL 32808<br><br>
+          <span id="addr1">5524 W Colonial Drive, Suite A</span><br>
+          <span id="addr2">Orlando, FL 32808</span><br><br>
           <a href="https://www.google.com/maps/search/?api=1&amp;query=5524+W+Colonial+Dr+Suite+A+Orlando+FL+32808" target="_blank" rel="noopener">Get directions</a>
           <span id="contactLines"></span>
         </p>
-        <p class="note">Free parking on site. Card, cash and mobile pay accepted. Returns within 30 days with receipt and tags attached.</p>
+        <p class="note" id="storeNote">Free parking on site. Card, cash and mobile pay accepted. Returns within 30 days with receipt and tags attached.</p>
       </div>
       <div>
         <table class="hours">
@@ -463,7 +463,9 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
 
 <script>
 /* ---- EDIT: store hours. 24h decimal, e.g. 21.5 = 9:30 PM. null = closed ---- */
-const HOURS = [
+/* Hours come from content/settings.json — edit them in the admin panel.
+   These defaults only show if that file can't be loaded. */
+let HOURS = [
   {d:'Sunday',    open:10, close:20},
   {d:'Monday',    open:10, close:20},
   {d:'Tuesday',   open:10, close:20},
@@ -472,6 +474,21 @@ const HOURS = [
   {d:'Friday',    open:10, close:20},
   {d:'Saturday',  open:10, close:20}
 ];
+
+/* Accepts "10:00 AM", "10am", "10", "22:00", "8:30 PM" -> decimal hours */
+function parseTime(str){
+  if (str == null) return null;
+  const t = String(str).trim().toLowerCase().replace(/\./g,'');
+  const m = t.match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$/);
+  if (!m) return null;
+  let hr = parseInt(m[1],10);
+  const min = m[2] ? parseInt(m[2],10) : 0;
+  const ap = m[3];
+  if (hr > 23 || min > 59) return null;
+  if (ap === 'pm' && hr < 12) hr += 12;
+  if (ap === 'am' && hr === 12) hr = 0;
+  return hr + min/60;
+}
 
 const fmt = h => {
   const hr = Math.floor(h), m = Math.round((h - hr) * 60);
@@ -484,28 +501,38 @@ const now = new Date();
 const today = now.getDay();
 const nowDec = now.getHours() + now.getMinutes()/60;
 
-/* Hours table */
-document.getElementById('hoursBody').innerHTML = HOURS.map((r,i) => `
-  <tr class="${i===today?'today':''}">
-    <td>${r.d}</td>
-    <td>${r.open===null ? 'Closed' : fmt(r.open)+' – '+fmt(r.close)}</td>
-  </tr>`).join('');
+function renderHours(){
+  document.getElementById('hoursBody').innerHTML = HOURS.map((r,i) => `
+    <tr class="${i===today?'today':''}">
+      <td>${r.d}</td>
+      <td>${r.open===null ? 'Closed' : fmt(r.open)+' \u2013 '+fmt(r.close)}</td>
+    </tr>`).join('');
 
-/* Open now badge */
-const t = HOURS[today];
-const badge = document.getElementById('openNow');
-let msg;
-if (t.open !== null && nowDec >= t.open && nowDec < t.close) {
-  msg = `Open now · closes ${fmt(t.close)}`;
-} else if (t.open !== null && nowDec < t.open) {
-  msg = `Opens ${fmt(t.open)} today`;
-  badge.classList.add('shut');
-} else {
-  const nxt = HOURS[(today+1)%7];
-  msg = `Closed · opens ${fmt(nxt.open)} tomorrow`;
-  badge.classList.add('shut');
+  const t = HOURS[today];
+  const badge = document.getElementById('openNow');
+  badge.classList.remove('shut');
+  let msg;
+  if (t.open !== null && nowDec >= t.open && nowDec < t.close) {
+    msg = `Open now \u00b7 closes ${fmt(t.close)}`;
+  } else if (t.open !== null && nowDec < t.open) {
+    msg = `Opens ${fmt(t.open)} today`;
+    badge.classList.add('shut');
+  } else {
+    let n = 1, nxt = null;
+    while (n <= 7){
+      const c = HOURS[(today+n)%7];
+      if (c.open !== null){ nxt = c; break; }
+      n++;
+    }
+    msg = nxt ? (n===1 ? `Closed \u00b7 opens ${fmt(nxt.open)} tomorrow`
+                       : `Closed \u00b7 opens ${nxt.d} at ${fmt(nxt.open)}`)
+              : 'Closed';
+    badge.classList.add('shut');
+  }
+  badge.innerHTML = '<span class="dot"></span><b>' + msg + '</b>';
 }
-badge.innerHTML = '<span class="dot"></span><b>' + msg + '</b>';
+
+renderHours();
 
 /* Mobile menu */
 const burger = document.querySelector('.burger'), nav = document.getElementById('nav');
@@ -533,6 +560,23 @@ const esc = s => String(s == null ? '' : s)
   .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
   .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 
+/* Strips $ and commas -> number, or null */
+function parseMoney(v){
+  if (v == null) return null;
+  const n = parseFloat(String(v).replace(/[^0-9.]/g, ''));
+  return isFinite(n) ? n : null;
+}
+
+/* Works out the discount badge from the two prices.
+   Rounds DOWN so the site never claims a bigger discount than it gives. */
+function pctOff(compare, price){
+  const c = parseMoney(compare), p = parseMoney(price);
+  if (c === null || p === null) return null;
+  if (c <= 0 || p < 0 || p >= c) return null;
+  const pct = Math.floor((1 - p / c) * 100);
+  return pct >= 1 ? pct + '% off' : null;
+}
+
 function findCard(it){
   const shot = it.photo
     ? `<div class="shot"><img src="${esc(it.photo)}" alt="${esc(it.name)}" loading="lazy" onerror="this.remove()"></div>`
@@ -540,7 +584,8 @@ function findCard(it){
   const compare = it.compare
     ? `<div class="compare">Compare at ${esc(it.compare)}<span class="strike" aria-hidden="true"><i></i><i></i><i></i></span></div>`
     : '';
-  const off = it.off ? `<span class="off">${esc(it.off)}</span>` : '';
+  const badge = (it.off && String(it.off).trim()) || pctOff(it.compare, it.price);
+  const off = badge ? `<span class="off">${esc(badge)}</span>` : '';
   return `<article class="find">
     ${shot}
     <div class="find-body">
@@ -611,6 +656,41 @@ fetch('/content/settings.json', {cache:'no-store'})
     if (s.phone) lines.push(`<a href="tel:${esc(s.phone.replace(/[^0-9+]/g,''))}">${esc(s.phone)}</a>`);
     if (s.email) lines.push(`<a href="mailto:${esc(s.email)}">${esc(s.email)}</a>`);
     if (lines.length) document.getElementById('contactLines').innerHTML = '<br><br>' + lines.join('<br>');
+
+    /* Hero copy */
+    if (s.hero_headline){
+      const em = s.hero_emphasis;
+      let out = esc(s.hero_headline);
+      if (em && s.hero_headline.includes(em)){
+        out = out.replace(esc(em), '<em>' + esc(em) + '</em>');
+      }
+      document.getElementById('heroHeadline').innerHTML = out;
+    }
+    if (s.hero_sub) document.getElementById('heroSub').textContent = s.hero_sub;
+
+    /* Address & notes */
+    if (s.address_line1) document.getElementById('addr1').textContent = s.address_line1;
+    if (s.address_line2) document.getElementById('addr2').textContent = s.address_line2;
+    if (s.store_note)   document.getElementById('storeNote').textContent = s.store_note;
+    if (s.holiday_note) document.getElementById('holidayNote').textContent = s.holiday_note;
+
+    /* Store hours */
+    if (Array.isArray(s.hours) && s.hours.length){
+      const order = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      const byDay = {};
+      s.hours.forEach(r => { if (r && r.day) byDay[String(r.day).trim()] = r; });
+      const built = order.map(name => {
+        const r = byDay[name];
+        if (!r || r.closed) return {d:name, open:null, close:null};
+        const o = parseTime(r.open), c = parseTime(r.close);
+        if (o === null || c === null) return {d:name, open:null, close:null};
+        return {d:name, open:o, close:c};
+      });
+      if (built.some(r => r.open !== null)){
+        HOURS = built;
+        renderHours();
+      }
+    }
   })
   .catch(() => {});
 
