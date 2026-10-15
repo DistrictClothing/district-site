@@ -4,5 +4,105 @@
   "eyebrow": "New arrivals every week",
   "whatnot_url": "",
   "email": "support@district-clothing.com",
-  "phone": ""
+  "phone": "",
+  "opening_mode": "soft",
+  "soft_hours": [
+    {
+      "day": "Monday",
+      "closed": false,
+      "open": "12:00 PM",
+      "close": "8:00 PM"
+    },
+    {
+      "day": "Tuesday",
+      "closed": false,
+      "open": "12:00 PM",
+      "close": "8:00 PM"
+    },
+    {
+      "day": "Wednesday",
+      "closed": false,
+      "open": "12:00 PM",
+      "close": "8:00 PM"
+    },
+    {
+      "day": "Thursday",
+      "closed": false,
+      "open": "12:00 PM",
+      "close": "8:00 PM"
+    },
+    {
+      "day": "Friday",
+      "closed": false,
+      "open": "12:00 PM",
+      "close": "8:00 PM"
+    },
+    {
+      "day": "Saturday",
+      "closed": false,
+      "open": "12:00 PM",
+      "close": "8:00 PM"
+    },
+    {
+      "day": "Sunday",
+      "closed": false,
+      "open": "12:00 PM",
+      "close": "8:00 PM"
+    }
+  ],
+  "permanent_hours": [
+    {
+      "day": "Monday",
+      "closed": false,
+      "open": "9:00 AM",
+      "close": "11:00 PM"
+    },
+    {
+      "day": "Tuesday",
+      "closed": false,
+      "open": "9:00 AM",
+      "close": "11:00 PM"
+    },
+    {
+      "day": "Wednesday",
+      "closed": false,
+      "open": "9:00 AM",
+      "close": "11:00 PM"
+    },
+    {
+      "day": "Thursday",
+      "closed": false,
+      "open": "9:00 AM",
+      "close": "11:00 PM"
+    },
+    {
+      "day": "Friday",
+      "closed": false,
+      "open": "9:00 AM",
+      "close": "11:00 PM"
+    },
+    {
+      "day": "Saturday",
+      "closed": false,
+      "open": "9:00 AM",
+      "close": "11:00 PM"
+    },
+    {
+      "day": "Sunday",
+      "closed": false,
+      "open": "9:00 AM",
+      "close": "11:00 PM"
+    }
+  ],
+  "hero_headline": "The same brands. Not the same price.",
+  "hero_emphasis": "Not",
+  "hero_sub": "Apparel, shoes, home and beauty at 20–70% off department store prices. New freight every week, one floor, and no two visits the same.",
+  "announcement": "",
+  "address_line1": "5524 W Colonial Drive, Suite A",
+  "address_line2": "Orlando, FL 32808",
+  "store_note": "Free parking on site. Card, cash and mobile pay accepted. Returns within 30 days with receipt and tags attached.",
+  "holiday_note": "Holiday hours may vary — call ahead on major holidays.",
+  "instagram_url": "",
+  "facebook_url": "",
+  "tiktok_url": ""
 }
