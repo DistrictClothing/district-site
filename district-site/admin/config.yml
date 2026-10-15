@@ -80,6 +80,25 @@ collections:
                 name: "price"
                 widget: "string"
                 hint: "Sale price, e.g. $19.99. Open Preview to see the automatically calculated percent off."
+              - label: Sizes (optional)
+                name: sizes
+                widget: string
+                required: false
+                hint: Enter actual available sizes, e.g. S, M, L. Leave blank if unknown.
+              - label: Colors (optional)
+                name: colors
+                widget: string
+                required: false
+                hint: Enter actual available colors. Leave blank if unknown.
+              - label: Last updated (optional)
+                name: last_updated
+                widget: string
+                required: false
+                hint: 'Only enter the actual date you checked or updated this item: YYYY-MM-DD. No date is added automatically;
+                  future or invalid dates are hidden.'
+                pattern:
+                - ^\d{4}-\d{2}-\d{2}$
+                - Use YYYY-MM-DD or leave blank.
               - label: "Sold out / hide from website"
                 name: "sold_out"
                 widget: "boolean"
@@ -248,3 +267,15 @@ collections:
             widget: string
             required: false
             hint: Full https:// link. Leave blank to hide.
+          - label: FAQs / store policies (optional)
+            name: faqs
+            widget: list
+            required: false
+            hint: Add only confirmed answers or policies. This section stays hidden until complete entries are added.
+            fields:
+            - label: Question
+              name: question
+              widget: string
+            - label: Answer
+              name: answer
+              widget: text

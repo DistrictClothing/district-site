@@ -162,8 +162,6 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
 /* ============================================================
    SIGNATURE — this week's finds, photo + markdown tag
    ============================================================ */
-.dateline{display:inline-flex;align-items:center;gap:9px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--pink);margin-bottom:16px}
-.dateline::before{content:"";width:22px;height:3px;background:var(--pink);box-shadow:0 6px 0 var(--pink),0 -6px 0 var(--pink)}
 
 .finds{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:22px}
 .find{
@@ -180,9 +178,9 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
   background-image:repeating-linear-gradient(135deg,transparent 0 14px,rgba(238,75,152,.13) 14px 28px);
 }
 .shot::after{
-  content:"Add photo";position:absolute;inset:0;display:grid;place-items:center;
+  content:"Photo unavailable";position:absolute;inset:0;display:grid;place-items:center;
   font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;letter-spacing:.18em;
-  text-transform:uppercase;color:#5A5A62;
+  text-transform:uppercase;color:#B4B4BC;
 }
 .shot img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block}
 
@@ -292,6 +290,19 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
 .ftr li a{color:#B4B4BC;text-decoration:none;font-size:15px}
 .ftr li a:hover{color:#fff}
 .ftr-btm{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;padding-top:26px;font-size:13px;color:#6E6E76}
+
+/* Practical visit information, visible before the product grid. */
+.visit-strip{display:grid;grid-template-columns:1fr 1.3fr auto;gap:24px;align-items:center;margin-top:36px;padding:24px;border:1px solid var(--rule);border-left:5px solid var(--pink);background:var(--paper-2)}
+.visit-strip strong{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--pink-deep);margin-bottom:6px}
+.visit-strip p{font-size:15px;line-height:1.5}
+.visit-strip .visit-status{font-size:13px;color:var(--gray);margin-top:5px}
+.visit-strip .btn{font-size:14px;padding:14px 20px;text-align:center}
+.visit-strip .btn:hover{background:var(--pink-deep);color:#fff}
+.product-details{font-size:12px;color:var(--gray);line-height:1.6;margin-top:14px}
+.faq-list details{border-bottom:1px solid var(--rule);padding:18px 0}
+.faq-list summary{cursor:pointer;font-weight:700}
+.faq-list p{margin-top:12px;max-width:70ch;white-space:pre-line}
+@media(max-width:720px){.visit-strip{grid-template-columns:1fr;gap:18px;padding:20px}.visit-strip .btn{width:100%}}
 </style>
 </head>
 <body>
@@ -306,7 +317,7 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
     </a>
     <button class="burger" aria-label="Menu" aria-expanded="false" aria-controls="nav"><span></span><span></span><span></span></button>
     <nav class="nav" id="nav">
-      <a href="#deals">This week</a>
+      <a href="#deals">Finds</a>
       <a href="#depts">Departments</a>
       <a href="#store">Store &amp; hours</a>
       <a href="#jobs">Careers</a>
@@ -328,8 +339,13 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
     <p class="hero-sub" id="heroSub">Apparel, shoes, home and beauty at 20–70% off department store prices. New freight every week, one floor, and no two visits the same.</p>
     <div class="hero-meta">
       <a class="chip fill" href="#store">Store &amp; hours</a>
-      <a class="chip" href="#deals">See this week's finds</a>
+      <a class="chip" href="#deals">See the latest finds</a>
       <a class="chip" id="whatnotBtn" href="#" target="_blank" rel="noopener" hidden>Find us on Whatnot ↗</a>
+    </div>
+    <div class="visit-strip" aria-label="Plan your visit">
+      <div><strong id="visitMode">Soft opening hours</strong><p id="visitHours">12 PM – 8 PM daily</p><p class="visit-status" id="visitStatus"></p></div>
+      <div><strong>Visit the store</strong><p id="visitAddress">5524 W Colonial Drive, Suite A, Orlando, FL 32808</p></div>
+      <a class="btn" data-directions href="https://www.google.com/maps/search/?api=1&amp;query=5524%20W%20Colonial%20Drive%2C%20Suite%20A%2C%20Orlando%2C%20FL%2032808" target="_blank" rel="noopener">Get directions</a>
     </div>
   </section>
 
@@ -349,8 +365,7 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
     <div class="wrap">
       <div class="sec-head">
         <div>
-          <span class="dateline" id="dateline"></span>
-          <h2>This week's<br>finds</h2>
+          <h2>Latest<br>finds</h2>
         </div>
         <p>A sample of what came off the truck. Quantities are limited and styles change daily — these are here until they're not.</p>
       </div>
@@ -405,6 +420,11 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
     </div>
   </section>
 
+
+  <section class="sec sec-gray" id="faqSection" hidden>
+    <div class="wrap"><div class="sec-head"><h2>Good to know</h2></div><div class="faq-list" id="faqList"></div></div>
+  </section>
+
   <!-- ============ CAREERS ============ -->
   <section class="sec sec-dark" id="jobs">
     <div class="wrap hiring">
@@ -428,9 +448,8 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
     </a>
     <div class="ftr-grid">
       <div><h4>Shop</h4><ul>
-        <li><a href="#deals">This week's finds</a></li>
+        <li><a href="#deals">Latest finds</a></li>
         <li><a href="#depts">Departments</a></li>
-        <li><a href="#store">Gift cards</a></li>
       </ul></div>
       <div><h4>Store</h4><ul>
         <li><a href="#store">Hours &amp; location</a></li>
@@ -440,9 +459,8 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
       <div><h4>Company</h4><ul>
         <li><a href="#jobs">Careers</a></li>
         <li><a href="#store">Contact</a></li>
-        <li><a href="#top">Accessibility</a></li>
       </ul></div>
-      <div><h4>Follow</h4><ul>
+      <div id="followLinks" hidden><h4>Follow</h4><ul>
         <li><a id="whatnotFoot" href="#" target="_blank" rel="noopener" hidden>Whatnot</a></li>
         <li><a id="instagramFoot" target="_blank" rel="noopener" hidden>Instagram</a></li>
         <li><a id="facebookFoot" target="_blank" rel="noopener" hidden>Facebook</a></li>
@@ -451,7 +469,6 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
     </div>
     <div class="ftr-btm">
       <span>© <span id="yr"></span> District Clothing and More</span>
-      <span>Privacy · Terms · Do not sell my info</span>
     </div>
   </div>
 </footer>
@@ -549,6 +566,8 @@ function renderHours(){
     badge.classList.add('shut');
   }
   badge.innerHTML = '<span class="dot"></span><b>' + msg + '</b>';
+  document.getElementById('visitHours').textContent = 'Today: ' + (t.open === null ? 'Closed' : fmt(t.open) + ' – ' + fmt(t.close));
+  document.getElementById('visitStatus').textContent = msg;
 }
 
 renderHours();
@@ -565,13 +584,6 @@ nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
   nav.classList.remove('open');
   burger.setAttribute('aria-expanded', false);
 }));
-
-/* Dateline — auto-shows the current week */
-const mon = new Date(now);
-mon.setDate(now.getDate() - ((now.getDay() + 6) % 7));
-document.getElementById('dateline').textContent =
-  'Week of ' + mon.toLocaleDateString('en-US',{month:'long',day:'numeric'});
-
 
 /* ============================================================
    CONTENT LOADER — pulls from /content/*.json
@@ -599,6 +611,35 @@ function pctOff(compare, price){
   return pct >= 1 ? pct + '% off' : null;
 }
 
+/* Only show dates the owner entered, validated against Orlando's current date. */
+function formatUpdated(value){
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return '';
+  const date = new Date(value + 'T12:00:00Z');
+  if (!Number.isFinite(date.getTime()) || date.toISOString().slice(0,10) !== value) return '';
+  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', {
+    timeZone:'America/New_York', year:'numeric', month:'2-digit', day:'2-digit'
+  }).formatToParts(new Date()).map(p => [p.type,p.value]));
+  const today = parts.year + '-' + parts.month + '-' + parts.day;
+  if (value > today) return '';
+  return new Intl.DateTimeFormat('en-US', {timeZone:'UTC',month:'short',day:'numeric',year:'numeric'}).format(date);
+}
+function productDetails(it){
+  const parts = [];
+  if (typeof it.sizes === 'string' && it.sizes.trim()) parts.push('<p>Sizes: ' + esc(it.sizes.trim()) + '</p>');
+  if (typeof it.colors === 'string' && it.colors.trim()) parts.push('<p>Colors: ' + esc(it.colors.trim()) + '</p>');
+  const updated = formatUpdated(it.last_updated);
+  if (updated) parts.push('<p>Updated <time datetime="' + esc(it.last_updated) + '">' + esc(updated) + '</time></p>');
+  return parts.length ? '<div class="product-details">' + parts.join('') + '</div>' : '';
+}
+function renderFaqs(settings){
+  const faqs = Array.isArray(settings.faqs) ? settings.faqs.filter(item =>
+    item && typeof item.question === 'string' && item.question.trim() &&
+    typeof item.answer === 'string' && item.answer.trim()) : [];
+  document.getElementById('faqList').innerHTML = faqs.map(item =>
+    '<details><summary>' + esc(item.question) + '</summary><p>' + esc(item.answer) + '</p></details>').join('');
+  document.getElementById('faqSection').hidden = !faqs.length;
+}
+
 function findCard(it){
   const photo = safePhotoUrl(it.photo);
   const shot = photo
@@ -616,6 +657,7 @@ function findCard(it){
       <h3>${esc(it.name)}</h3>
       ${compare}
       <div class="pay"><span class="amt">${esc(it.price)}</span>${off}</div>
+    ${productDetails(it)}
     </div>
   </article>`;
 }
@@ -767,6 +809,10 @@ function applySettings(s){
   const future = document.getElementById('futureHours');
   future.hidden = mode === 'permanent';
   future.textContent = 'Future permanent hours: ' + scheduleSummary(scheduleFor(s,'permanent')) + '. Soft opening hours are in effect now.';
+  document.getElementById('visitMode').textContent = mode === 'permanent' ? 'Store hours' : 'Soft opening hours';
+  document.getElementById('visitAddress').textContent = address;
+  document.getElementById('followLinks').hidden = !['whatnot_url','instagram_url','facebook_url','tiktok_url'].some(key => safeWebUrl(s[key]));
+  renderFaqs(s);
   renderHours();
   updateStoreMetadata(s,mode);
 }
@@ -781,6 +827,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
 </body>
 </html>
+
 
 
 

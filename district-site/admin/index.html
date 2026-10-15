@@ -28,6 +28,18 @@
       const pct = Math.floor((c - p) * 100 / c);
       return pct >= 1 ? pct + '% off' : null;
     }
+    /* Only show dates the owner entered, validated against Orlando's current date. */
+    function formatUpdated(value){
+      if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return '';
+      const date = new Date(value + 'T12:00:00Z');
+      if (!Number.isFinite(date.getTime()) || date.toISOString().slice(0,10) !== value) return '';
+      const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', {
+        timeZone:'America/New_York', year:'numeric', month:'2-digit', day:'2-digit'
+      }).formatToParts(new Date()).map(p => [p.type,p.value]));
+      const today = parts.year + '-' + parts.month + '-' + parts.day;
+      if (value > today) return '';
+      return new Intl.DateTimeFormat('en-US', {timeZone:'UTC',month:'short',day:'numeric',year:'numeric'}).format(date);
+    }
     /* Supported Decap preview: recomputed from draft prices on every render. */
     const FindsPreview = createClass({
       render: function () {
@@ -52,6 +64,10 @@
               h('p', {}, item.category || 'Choose a department'),
               h('h2', {style: {fontSize: '18px', margin: '0 0 8px'}}, item.name || 'New item'),
               h('p', {}, 'Compare at price: ' + (item.compare || '—') + ' · Our price: ' + (item.price == null || item.price === '' ? '—' : item.price)),
+              item.sizes ? h('p', {}, 'Sizes: ' + item.sizes) : null,
+              item.colors ? h('p', {}, 'Colors: ' + item.colors) : null,
+              formatUpdated(item.last_updated) ? h('p', {}, 'Updated ' + formatUpdated(item.last_updated)) :
+                (item.last_updated ? h('p', {style:{color:'#B3261E'}}, 'Update date is invalid or in the future; it will not appear on the website.') : null),
               h('p', {style: {color: '#C2226F', fontWeight: 'bold'}, 'aria-live': 'polite'},
                 badge || 'No discount badge: enter a valid original price and a lower sale price. Discounts below 1% are hidden.')
             );
@@ -64,5 +80,6 @@
   </script>
 </body>
 </html>
+
 
 
