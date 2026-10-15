@@ -8,5 +8,49 @@
 </head>
 <body>
   <script src="https://unpkg.com/decap-cms@^3.8.4/dist/decap-cms.js"></script>
+
+  <script>
+  (function () {
+    /* Parse dollar amounts into cents; invalid or negative prices get no badge. */
+    function parseMoney(v){
+      if (v == null) return null;
+      const text = String(v).trim().replace(/^\$\s*/, '');
+      if (!/^(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d{1,2})?$/.test(text)) return null;
+      const parts = text.replace(/,/g, '').split('.');
+      const cents = Number(parts[0]) * 100 + Number((parts[1] || '').padEnd(2, '0'));
+      return Number.isSafeInteger(cents) && cents <= Number.MAX_SAFE_INTEGER / 100 ? cents : null;
+    }
+
+    /* Round DOWN; stored manual badges never override the current prices. */
+    function pctOff(compare, price){
+      const c = parseMoney(compare), p = parseMoney(price);
+      if (c === null || p === null || c <= 0 || p >= c) return null;
+      const pct = Math.floor((c - p) * 100 / c);
+      return pct >= 1 ? pct + '% off' : null;
+    }
+    /* Supported Decap preview: recomputed from draft prices on every render. */
+    const FindsPreview = createClass({
+      render: function () {
+        const values = this.props.entry.getIn(['data', 'items']);
+        const items = values ? values.toJS() : [];
+        return h('section', {style: {fontFamily: 'sans-serif', padding: '24px', color: '#0B0B0C'}},
+          h('h1', {}, 'Automatic discounts'),
+          h('p', {}, 'Change Compare at price or Our price to update each discount here. Publish to update the website. Percentages are rounded down.'),
+          items.length ? items.map(function (item, index) {
+            const badge = pctOff(item.compare, item.price);
+            return h('article', {key: index, style: {borderBottom: '1px solid #E2E2E6', padding: '16px 0'}},
+              h('h2', {style: {fontSize: '18px', margin: '0 0 8px'}}, item.name || 'New item'),
+              h('p', {}, 'Compare at price: ' + (item.compare || '—') + ' · Our price: ' + (item.price == null || item.price === '' ? '—' : item.price)),
+              h('p', {style: {color: '#C2226F', fontWeight: 'bold'}, 'aria-live': 'polite'},
+                badge || 'No discount badge: enter a valid original price and a lower sale price. Discounts below 1% are hidden.')
+            );
+          }) : h('p', {}, 'Add an item and enter its two prices to see the discount.')
+        );
+      }
+    });
+    CMS.registerPreviewTemplate('finds', FindsPreview);
+  })();
+  </script>
 </body>
 </html>
+
