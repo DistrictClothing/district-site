@@ -33,12 +33,23 @@
       render: function () {
         const values = this.props.entry.getIn(['data', 'items']);
         const items = values ? values.toJS() : [];
+        const getAsset = this.props.getAsset;
         return h('section', {style: {fontFamily: 'sans-serif', padding: '24px', color: '#0B0B0C'}},
-          h('h1', {}, 'Automatic discounts'),
-          h('p', {}, 'Change Compare at price or Our price to update each discount here. Publish to update the website. Percentages are rounded down.'),
+          h('h1', {}, 'Product preview'),
+          h('p', {}, 'Preview photos, prices and automatic discounts as you edit. Sold-out items stay here but are hidden on the website. Publish to apply changes.'),
           items.length ? items.map(function (item, index) {
             const badge = pctOff(item.compare, item.price);
+            let photo = '';
+            if (item.photo && typeof getAsset === 'function'){
+              const asset = getAsset(item.photo);
+              const url = asset ? asset.toString() : '';
+              if (/^(?:https?:\/\/|blob:|data:image\/(?:png|jpeg|gif|webp);|\/images\/uploads\/)/i.test(url)) photo = url;
+            }
             return h('article', {key: index, style: {borderBottom: '1px solid #E2E2E6', padding: '16px 0'}},
+              photo ? h('img', {src:photo, alt:item.name || 'Product photo', style:{width:'100%', maxWidth:'240px', aspectRatio:'4 / 5', objectFit:'cover', borderRadius:'4px'}})
+                : h('p', {}, 'No photo selected'),
+              h('p', {style:{fontWeight:'bold'}}, item.sold_out === true ? 'Sold out — hidden on website' : 'Visible on website'),
+              h('p', {}, item.category || 'Choose a department'),
               h('h2', {style: {fontSize: '18px', margin: '0 0 8px'}}, item.name || 'New item'),
               h('p', {}, 'Compare at price: ' + (item.compare || '—') + ' · Our price: ' + (item.price == null || item.price === '' ? '—' : item.price)),
               h('p', {style: {color: '#C2226F', fontWeight: 'bold'}, 'aria-live': 'polite'},
@@ -53,4 +64,5 @@
   </script>
 </body>
 </html>
+
 
