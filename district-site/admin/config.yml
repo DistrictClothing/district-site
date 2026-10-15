@@ -29,6 +29,8 @@ collections:
   # ---------- THIS WEEK'S FINDS ----------
   - name: "finds"
     label: "This Week's Finds"
+    editor:
+      preview: true
     files:
       - name: "finds"
         label: "Finds on the floor"
@@ -58,16 +60,15 @@ collections:
                 name: "compare"
                 widget: "string"
                 required: false
-                hint: "What it sells for elsewhere. Include the $. Leave blank to hide."
+                hint: "Original price, e.g. $39.99. The discount updates automatically in Preview when either price changes. Leave blank for no badge."
               - label: "Our price"
                 name: "price"
                 widget: "string"
-                hint: "Include the $, e.g. $19.99"
-              - label: "Percent off badge"
-                name: "off"
-                widget: "string"
+                hint: "Sale price, e.g. $19.99. Open Preview to see the automatically calculated percent off."
+              # Preserve legacy data; discounts are calculated from the two prices.
+              - name: "off"
+                widget: "hidden"
                 required: false
-                hint: "e.g. 65% off. Leave blank to hide the pink badge."
 
   # ---------- SITE SETTINGS ----------
   - name: "settings"
@@ -105,3 +106,4 @@ collections:
             widget: "string"
             required: false
             hint: "Leave blank to hide it from the site."
+
