@@ -48,10 +48,25 @@ collections:
                 widget: "image"
                 required: false
                 hint: "Hold your phone upright when you shoot. Leave blank to show a placeholder."
-              - label: "Department"
-                name: "category"
-                widget: "string"
-                hint: "e.g. Women's dresses, Kids' shoes, Home & bath"
+              - label: Department
+                name: category
+                widget: select
+                options:
+                - Women
+                - Men
+                - Kids & baby
+                - Shoes
+                - Home
+                - Beauty
+                - Bags
+                - Toys & gifts
+                - Women’s Activewear
+                - Men’s Graphic Tees
+                - Girls’ Clothing
+                - Women’s Handbags & Accessories
+                - Men's tops
+                - Men's Hoodies
+                hint: Choose a consistent department. Existing department labels are preserved as choices.
               - label: "Item name"
                 name: "name"
                 widget: "string"
@@ -65,6 +80,12 @@ collections:
                 name: "price"
                 widget: "string"
                 hint: "Sale price, e.g. $19.99. Open Preview to see the automatically calculated percent off."
+              - label: "Sold out / hide from website"
+                name: "sold_out"
+                widget: "boolean"
+                default: false
+                required: false
+                hint: "Turn on to hide this item without deleting it. Turn off to show it again."
               # Preserve legacy data; discounts are calculated from the two prices.
               - name: "off"
                 widget: "hidden"
@@ -75,9 +96,9 @@ collections:
     label: "Site Settings"
     files:
       - name: "settings"
-        label: "Banner, links & contact"
+        label: "Hours, homepage, announcements & contact"
         file: "district-site/content/settings.json"
-        description: "Controls the diagonal ribbon, your Whatnot link, and contact details."
+        description: "Edit daily schedules, choose when to switch to permanent hours, and update homepage copy and links. Publish to apply changes."
         fields:
           - label: "Show the diagonal ribbon"
             name: "ribbon_on"
@@ -106,4 +127,124 @@ collections:
             widget: "string"
             required: false
             hint: "Leave blank to hide it from the site."
-
+          - label: Active opening schedule
+            name: opening_mode
+            widget: select
+            default: soft
+            options:
+            - label: Soft opening (active now)
+              value: soft
+            - label: Permanent hours
+              value: permanent
+            hint: Switch manually only when permanent hours should start. No date-based switch is scheduled.
+          - label: 'Soft opening: daily hours'
+            name: soft_hours
+            widget: list
+            allow_add: false
+            min: 7
+            max: 7
+            summary: '{{fields.day}} — {{fields.open}} to {{fields.close}}'
+            hint: Use each day once. Closed days ignore the time fields. Opening and closing must be on the same day.
+            fields:
+            - label: Day
+              name: day
+              widget: hidden
+            - label: Closed all day
+              name: closed
+              widget: boolean
+              default: false
+            - label: Opens
+              name: open
+              widget: string
+              required: false
+              hint: e.g. 12:00 PM or 09:00
+              pattern:
+              - ^(?:(?:0?[1-9]|1[0-2])(?::[0-5][0-9])?\s*[AaPp][Mm]|(?:[01]?[0-9]|2[0-3])(?::[0-5][0-9])?)$
+              - Enter a valid time such as 12:00 PM or 23:00.
+            - label: Closes
+              name: close
+              widget: string
+              required: false
+              hint: e.g. 8:00 PM or 23:00
+              pattern:
+              - ^(?:(?:0?[1-9]|1[0-2])(?::[0-5][0-9])?\s*[AaPp][Mm]|(?:[01]?[0-9]|2[0-3])(?::[0-5][0-9])?)$
+              - Enter a valid time such as 12:00 PM or 23:00.
+          - label: 'Permanent: daily hours'
+            name: permanent_hours
+            widget: list
+            allow_add: false
+            min: 7
+            max: 7
+            summary: '{{fields.day}} — {{fields.open}} to {{fields.close}}'
+            hint: Use each day once. Closed days ignore the time fields. Opening and closing must be on the same day.
+            fields:
+            - label: Day
+              name: day
+              widget: hidden
+            - label: Closed all day
+              name: closed
+              widget: boolean
+              default: false
+            - label: Opens
+              name: open
+              widget: string
+              required: false
+              hint: e.g. 12:00 PM or 09:00
+              pattern:
+              - ^(?:(?:0?[1-9]|1[0-2])(?::[0-5][0-9])?\s*[AaPp][Mm]|(?:[01]?[0-9]|2[0-3])(?::[0-5][0-9])?)$
+              - Enter a valid time such as 12:00 PM or 23:00.
+            - label: Closes
+              name: close
+              widget: string
+              required: false
+              hint: e.g. 8:00 PM or 23:00
+              pattern:
+              - ^(?:(?:0?[1-9]|1[0-2])(?::[0-5][0-9])?\s*[AaPp][Mm]|(?:[01]?[0-9]|2[0-3])(?::[0-5][0-9])?)$
+              - Enter a valid time such as 12:00 PM or 23:00.
+          - label: Homepage headline
+            name: hero_headline
+            widget: string
+            required: false
+          - label: Headline text to highlight pink
+            name: hero_emphasis
+            widget: string
+            required: false
+          - label: Homepage description
+            name: hero_sub
+            widget: text
+            required: false
+          - label: Homepage announcement (blank hides it)
+            name: announcement
+            widget: text
+            required: false
+          - label: Address line 1
+            name: address_line1
+            widget: string
+            required: false
+          - label: Address line 2
+            name: address_line2
+            widget: string
+            required: false
+          - label: Store / returns note
+            name: store_note
+            widget: text
+            required: false
+          - label: Holiday hours note
+            name: holiday_note
+            widget: string
+            required: false
+          - label: Instagram link
+            name: instagram_url
+            widget: string
+            required: false
+            hint: Full https:// link. Leave blank to hide.
+          - label: Facebook link
+            name: facebook_url
+            widget: string
+            required: false
+            hint: Full https:// link. Leave blank to hide.
+          - label: TikTok link
+            name: tiktok_url
+            widget: string
+            required: false
+            hint: Full https:// link. Leave blank to hide.
