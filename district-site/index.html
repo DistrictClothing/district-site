@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>District Clothing and More — Orlando, FL | Brand names for less</title>
-<meta name="description" content="District Clothing and More at 5524 W Colonial Dr, Suite A, Orlando FL 32808. Brand-name apparel, shoes, home and beauty at 20–70% off department store prices. Open daily 10 AM – 8 PM. Shop in store or catch us live on Whatnot.">
+<meta name="description" content="District Clothing and More at 5524 W Colonial Dr, Suite A, Orlando FL 32808. Brand-name apparel, shoes, home and beauty at 20–70% off department store prices. Soft opening hours: daily 12 PM – 8 PM. Shop in store or catch us live on Whatnot.">
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -23,7 +23,7 @@
   "openingHoursSpecification":[{
     "@type":"OpeningHoursSpecification",
     "dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-    "opens":"10:00",
+    "opens":"12:00",
     "closes":"20:00"
   }]
 }
@@ -394,9 +394,10 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
       </div>
       <div>
         <table class="hours">
-          <caption>Store hours</caption>
+          <caption>Soft opening hours</caption>
           <tbody id="hoursBody"></tbody>
         </table>
+        <p class="note"><strong>Future permanent hours:</strong> 9 AM – 11 PM daily. Soft opening hours are in effect now.</p>
         <p class="note" id="holidayNote">Holiday hours may vary — call ahead on major holidays.</p>
       </div>
     </div>
@@ -464,16 +465,16 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
 
 <script>
 /* ---- EDIT: store hours. 24h decimal, e.g. 21.5 = 9:30 PM. null = closed ---- */
-/* Hours come from content/settings.json — edit them in the admin panel.
-   These defaults only show if that file can't be loaded. */
+/* Active soft opening hours. Keep these until the owner requests permanent hours.
+   A settings.json hours array, if present, overrides these defaults. */
 let HOURS = [
-  {d:'Sunday',    open:10, close:20},
-  {d:'Monday',    open:10, close:20},
-  {d:'Tuesday',   open:10, close:20},
-  {d:'Wednesday', open:10, close:20},
-  {d:'Thursday',  open:10, close:20},
-  {d:'Friday',    open:10, close:20},
-  {d:'Saturday',  open:10, close:20}
+  {d:'Sunday',    open:12, close:20},
+  {d:'Monday',    open:12, close:20},
+  {d:'Tuesday',   open:12, close:20},
+  {d:'Wednesday', open:12, close:20},
+  {d:'Thursday',  open:12, close:20},
+  {d:'Friday',    open:12, close:20},
+  {d:'Saturday',  open:12, close:20}
 ];
 
 /* Accepts "10:00 AM", "10am", "10", "22:00", "8:30 PM" -> decimal hours */
@@ -716,4 +717,5 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
 </body>
 </html>
+
 
