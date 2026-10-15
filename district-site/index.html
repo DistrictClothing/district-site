@@ -498,11 +498,26 @@ const fmt = h => {
   return h12 + (m ? ':' + String(m).padStart(2,'0') : '') + ' ' + ap;
 };
 
+/* Store status always uses Orlando time, regardless of the visitor's timezone. */
+const storeClock = new Intl.DateTimeFormat('en-US', {
+  timeZone: 'America/New_York',
+  weekday: 'long',
+  hour: 'numeric',
+  minute: 'numeric',
+  hourCycle: 'h23'
+});
+function getStoreTime(date = new Date()){
+  const parts = Object.fromEntries(storeClock.formatToParts(date).map(p => [p.type, p.value]));
+  return {
+    today: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'].indexOf(parts.weekday),
+    nowDec: Number(parts.hour) + Number(parts.minute)/60
+  };
+}
+
 const now = new Date();
-const today = now.getDay();
-const nowDec = now.getHours() + now.getMinutes()/60;
 
 function renderHours(){
+  const {today, nowDec} = getStoreTime();
   document.getElementById('hoursBody').innerHTML = HOURS.map((r,i) => `
     <tr class="${i===today?'today':''}">
       <td>${r.d}</td>
@@ -534,6 +549,8 @@ function renderHours(){
 }
 
 renderHours();
+/* Keep the status current while a visitor leaves the page open. */
+setInterval(renderHours, 30000);
 
 /* Mobile menu */
 const burger = document.querySelector('.burger'), nav = document.getElementById('nav');
@@ -699,3 +716,4 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
 </body>
 </html>
+
