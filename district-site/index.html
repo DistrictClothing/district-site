@@ -579,20 +579,21 @@ const esc = s => String(s == null ? '' : s)
   .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
   .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 
-/* Strips $ and commas -> number, or null */
+/* Parse dollar amounts into cents; invalid or negative prices get no badge. */
 function parseMoney(v){
   if (v == null) return null;
-  const n = parseFloat(String(v).replace(/[^0-9.]/g, ''));
-  return isFinite(n) ? n : null;
+  const text = String(v).trim().replace(/^\$\s*/, '');
+  if (!/^(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d{1,2})?$/.test(text)) return null;
+  const parts = text.replace(/,/g, '').split('.');
+  const cents = Number(parts[0]) * 100 + Number((parts[1] || '').padEnd(2, '0'));
+  return Number.isSafeInteger(cents) && cents <= Number.MAX_SAFE_INTEGER / 100 ? cents : null;
 }
 
-/* Works out the discount badge from the two prices.
-   Rounds DOWN so the site never claims a bigger discount than it gives. */
+/* Round DOWN; stored manual badges never override the current prices. */
 function pctOff(compare, price){
   const c = parseMoney(compare), p = parseMoney(price);
-  if (c === null || p === null) return null;
-  if (c <= 0 || p < 0 || p >= c) return null;
-  const pct = Math.floor((1 - p / c) * 100);
+  if (c === null || p === null || c <= 0 || p >= c) return null;
+  const pct = Math.floor((c - p) * 100 / c);
   return pct >= 1 ? pct + '% off' : null;
 }
 
@@ -603,7 +604,7 @@ function findCard(it){
   const compare = it.compare
     ? `<div class="compare">Compare at ${esc(it.compare)}<span class="strike" aria-hidden="true"><i></i><i></i><i></i></span></div>`
     : '';
-  const badge = (it.off && String(it.off).trim()) || pctOff(it.compare, it.price);
+  const badge = pctOff(it.compare, it.price);
   const off = badge ? `<span class="off">${esc(badge)}</span>` : '';
   return `<article class="find">
     ${shot}
@@ -717,5 +718,6 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
 </body>
 </html>
+
 
 
