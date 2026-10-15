@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>District Clothing and More — Orlando, FL | Brand names for less</title>
 <meta name="description" content="District Clothing and More at 5524 W Colonial Dr, Suite A, Orlando FL 32808. Brand-name apparel, shoes, home and beauty at 20–70% off department store prices. Soft opening hours: daily 12 PM – 8 PM. Shop in store or catch us live on Whatnot.">
-<script type="application/ld+json">
+<script type="application/ld+json" id="storeSchema">
 {
   "@context":"https://schema.org",
   "@type":"ClothingStore",
@@ -54,6 +54,7 @@
 }
 
 *,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none !important}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 body{
@@ -322,6 +323,7 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
       <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>
       <span id="eyebrow">New arrivals every week</span>
     </div>
+    <p class="note" id="announcement" role="status" hidden></p>
     <h1 id="heroHeadline">The same brands. <em>Not</em> the same price.</h1>
     <p class="hero-sub" id="heroSub">Apparel, shoes, home and beauty at 20–70% off department store prices. New freight every week, one floor, and no two visits the same.</p>
     <div class="hero-meta">
@@ -387,17 +389,17 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
         <p class="addr">
           <span id="addr1">5524 W Colonial Drive, Suite A</span><br>
           <span id="addr2">Orlando, FL 32808</span><br><br>
-          <a href="https://www.google.com/maps/search/?api=1&amp;query=5524+W+Colonial+Dr+Suite+A+Orlando+FL+32808" target="_blank" rel="noopener">Get directions</a>
+          <a data-directions href="https://www.google.com/maps/search/?api=1&amp;query=5524+W+Colonial+Dr+Suite+A+Orlando+FL+32808" target="_blank" rel="noopener">Get directions</a>
           <span id="contactLines"></span>
         </p>
         <p class="note" id="storeNote">Free parking on site. Card, cash and mobile pay accepted. Returns within 30 days with receipt and tags attached.</p>
       </div>
       <div>
         <table class="hours">
-          <caption>Soft opening hours</caption>
+          <caption id="hoursLabel">Soft opening hours</caption>
           <tbody id="hoursBody"></tbody>
         </table>
-        <p class="note"><strong>Future permanent hours:</strong> 9 AM – 11 PM daily. Soft opening hours are in effect now.</p>
+        <p class="note" id="futureHours"><strong>Future permanent hours:</strong> 9 AM – 11 PM daily. Soft opening hours are in effect now.</p>
         <p class="note" id="holidayNote">Holiday hours may vary — call ahead on major holidays.</p>
       </div>
     </div>
@@ -433,7 +435,7 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
       <div><h4>Store</h4><ul>
         <li><a href="#store">Hours &amp; location</a></li>
         <li><a href="#store">Returns</a></li>
-        <li><a href="https://www.google.com/maps/search/?api=1&amp;query=5524+W+Colonial+Dr+Suite+A+Orlando+FL+32808" target="_blank" rel="noopener">Get directions</a></li>
+        <li><a data-directions href="https://www.google.com/maps/search/?api=1&amp;query=5524+W+Colonial+Dr+Suite+A+Orlando+FL+32808" target="_blank" rel="noopener">Get directions</a></li>
       </ul></div>
       <div><h4>Company</h4><ul>
         <li><a href="#jobs">Careers</a></li>
@@ -442,9 +444,9 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
       </ul></div>
       <div><h4>Follow</h4><ul>
         <li><a id="whatnotFoot" href="#" target="_blank" rel="noopener" hidden>Whatnot</a></li>
-        <li><a href="#top">Instagram</a></li>
-        <li><a href="#top">Facebook</a></li>
-        <li><a href="#top">TikTok</a></li>
+        <li><a id="instagramFoot" target="_blank" rel="noopener" hidden>Instagram</a></li>
+        <li><a id="facebookFoot" target="_blank" rel="noopener" hidden>Facebook</a></li>
+        <li><a id="tiktokFoot" target="_blank" rel="noopener" hidden>TikTok</a></li>
       </ul></div>
     </div>
     <div class="ftr-btm">
@@ -466,7 +468,7 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
 <script>
 /* ---- EDIT: store hours. 24h decimal, e.g. 21.5 = 9:30 PM. null = closed ---- */
 /* Active soft opening hours. Keep these until the owner requests permanent hours.
-   A settings.json hours array, if present, overrides these defaults. */
+   The active soft_hours or permanent_hours schedule in settings.json overrides these defaults. */
 let HOURS = [
   {d:'Sunday',    open:12, close:20},
   {d:'Monday',    open:12, close:20},
@@ -486,7 +488,7 @@ function parseTime(str){
   let hr = parseInt(m[1],10);
   const min = m[2] ? parseInt(m[2],10) : 0;
   const ap = m[3];
-  if (hr > 23 || min > 59) return null;
+  if (hr > 23 || min > 59 || (ap && (hr < 1 || hr > 12))) return null;
   if (ap === 'pm' && hr < 12) hr += 12;
   if (ap === 'am' && hr === 12) hr = 0;
   return hr + min/60;
@@ -598,8 +600,9 @@ function pctOff(compare, price){
 }
 
 function findCard(it){
-  const shot = it.photo
-    ? `<div class="shot"><img src="${esc(it.photo)}" alt="${esc(it.name)}" loading="lazy" onerror="this.remove()"></div>`
+  const photo = safePhotoUrl(it.photo);
+  const shot = photo
+    ? `<div class="shot"><img src="${esc(photo)}" alt="${esc(it.name)}" loading="lazy" onerror="this.remove()"></div>`
     : `<div class="shot"></div>`;
   const compare = it.compare
     ? `<div class="compare">Compare at ${esc(it.compare)}<span class="strike" aria-hidden="true"><i></i><i></i><i></i></span></div>`
@@ -640,84 +643,145 @@ fetch('/content/finds.json', {cache:'no-store'})
   .then(r => r.json())
   .then(d => {
     const grid = document.getElementById('findsGrid');
-    const items = (d && d.items) || [];
-    if (!items.length){ document.getElementById('deals').hidden = true; return; }
+    const items = Array.isArray(d && d.items) ? d.items.filter(it => it && it.sold_out !== true) : [];
+    document.getElementById('deals').hidden = !items.length;
+    if (!items.length){ grid.innerHTML = ''; return; }
     grid.innerHTML = items.map(findCard).join('');
     revealFinds();
   })
-  .catch(() => { document.getElementById('findsGrid').innerHTML = ''; });
+  .catch(() => { document.getElementById('findsGrid').innerHTML = ''; document.getElementById('deals').hidden = true; });
+
+/* Safe editable settings: no automatic opening-mode switch. */
+const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+function safeWebUrl(value){
+  if (typeof value !== 'string' || !/^https?:\/\//i.test(value.trim())) return '';
+  try {
+    const url = new URL(value.trim());
+    return (url.protocol === 'https:' || url.protocol === 'http:') && !url.username && !url.password ? url.href : '';
+  } catch (_) { return ''; }
+}
+function safePhotoUrl(value){
+  if (typeof value !== 'string') return '';
+  const text = value.trim();
+  if (/^\/images\/uploads\//.test(text) && !/[\\\u0000-\u001f]/.test(text)) return text;
+  return safeWebUrl(text);
+}
+function scheduleFor(settings, mode){
+  const key = mode === 'permanent' ? 'permanent_hours' : 'soft_hours';
+  const rows = settings[key];
+  if (!Object.prototype.hasOwnProperty.call(settings, key)){
+    return DAY_NAMES.map(d => ({d, open: mode === 'permanent' ? 9 : 12, close: mode === 'permanent' ? 23 : 20}));
+  }
+  const entries = Array.isArray(rows) ? rows : [];
+  return DAY_NAMES.map(d => {
+    const row = entries.find(r => r && r.day === d);
+    if (!row || row.closed) return {d, open:null, close:null};
+    const open = parseTime(row.open), close = parseTime(row.close);
+    return open === null || close === null || close <= open
+      ? {d, open:null, close:null} : {d, open, close};
+  });
+}
+function scheduleSummary(rows){
+  if (rows.every(r => r.open === null)) return 'Closed every day';
+  if (rows.every(r => r.open === rows[0].open && r.close === rows[0].close))
+    return fmt(rows[0].open) + ' – ' + fmt(rows[0].close) + ' daily';
+  return rows.map(r => r.d + ': ' + (r.open === null ? 'Closed' : fmt(r.open) + ' – ' + fmt(r.close))).join('; ');
+}
+function updateStoreMetadata(settings, mode){
+  const data = JSON.parse(document.getElementById('storeSchema').textContent);
+  const hhmm = n => String(Math.floor(n)).padStart(2,'0') + ':' + String(Math.round((n % 1) * 60)).padStart(2,'0');
+  data.openingHoursSpecification = HOURS.map(r => ({
+    '@type':'OpeningHoursSpecification', dayOfWeek:r.d,
+    opens:r.open === null ? '00:00' : hhmm(r.open),
+    closes:r.close === null ? '00:00' : hhmm(r.close)
+  }));
+  if (typeof settings.email === 'string' && settings.email.trim()) data.email = settings.email.trim();
+  else delete data.email;
+  if (typeof settings.phone === 'string' && settings.phone.trim()) data.telephone = settings.phone.trim();
+  else delete data.telephone;
+  data.address = [document.getElementById('addr1').textContent, document.getElementById('addr2').textContent].filter(Boolean).join(', ');
+  const socials = ['whatnot_url','instagram_url','facebook_url','tiktok_url'].map(k => safeWebUrl(settings[k])).filter(Boolean);
+  if (socials.length) data.sameAs = socials; else delete data.sameAs;
+  document.getElementById('storeSchema').textContent = JSON.stringify(data);
+  document.querySelector('meta[name="description"]').setAttribute('content',
+    'District Clothing and More in Orlando, FL. ' +
+    (typeof settings.hero_sub === 'string' ? settings.hero_sub + ' ' : '') +
+    (mode === 'permanent' ? 'Store hours: ' : 'Soft opening hours: ') + scheduleSummary(HOURS) + '.');
+}
+function applySettings(s){
+  if (!s || typeof s !== 'object' || Array.isArray(s)) return;
+  s = Object.assign({}, s);
+  ['eyebrow','announcement','hero_headline','hero_emphasis','hero_sub','address_line1','address_line2',
+   'store_note','holiday_note','email','phone'].forEach(key => {
+    if (Object.prototype.hasOwnProperty.call(s,key) && s[key] === null) s[key] = '';
+  });
+  const ribbon = document.getElementById('ribbon');
+  ribbon.hidden = !(s.ribbon_on === true && s.ribbon_text);
+  if (!ribbon.hidden){
+    ribbon.innerHTML = '<span aria-hidden="true">' + esc(s.ribbon_text) + '</span>';
+    ribbon.innerHTML = ribbon.innerHTML.repeat(3);
+    ribbon.setAttribute('aria-label', String(s.ribbon_text));
+  }
+  if (typeof s.eyebrow === 'string'){
+    document.getElementById('eyebrow').textContent = s.eyebrow;
+    document.querySelectorAll('.tickArrivals').forEach(el => el.textContent = s.eyebrow);
+  }
+  const announcement = document.getElementById('announcement');
+  announcement.textContent = typeof s.announcement === 'string' ? s.announcement : '';
+  announcement.hidden = !announcement.textContent.trim();
+  [['whatnot_url',['whatnotBtn','whatnotFoot']], ['instagram_url',['instagramFoot']],
+   ['facebook_url',['facebookFoot']], ['tiktok_url',['tiktokFoot']]].forEach(([key, ids]) => {
+    const url = safeWebUrl(s[key]);
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      el.hidden = !url;
+      if (url) el.href = url; else el.removeAttribute('href');
+    });
+  });
+  const lines = [];
+  if (typeof s.phone === 'string'){
+    const phone = s.phone.replace(/[^0-9+]/g,'');
+    if (phone) lines.push('<a href="tel:' + esc(phone) + '">' + esc(s.phone) + '</a>');
+  }
+  if (typeof s.email === 'string' && /^[^\s@?&#]+@[^\s@?&#]+\.[^\s@?&#]+$/.test(s.email.trim())){
+    const email = s.email.trim();
+    lines.push('<a href="mailto:' + esc(email) + '">' + esc(email) + '</a>');
+  }
+  document.getElementById('contactLines').innerHTML = lines.length ? '<br><br>' + lines.join('<br>') : '';
+  if (typeof s.hero_headline === 'string'){
+    let out = esc(s.hero_headline);
+    if (typeof s.hero_emphasis === 'string' && s.hero_emphasis && s.hero_headline.includes(s.hero_emphasis))
+      out = out.replace(esc(s.hero_emphasis), () => '<em>' + esc(s.hero_emphasis) + '</em>');
+    document.getElementById('heroHeadline').innerHTML = out;
+  }
+  [['hero_sub','heroSub'],['address_line1','addr1'],['address_line2','addr2'],
+   ['store_note','storeNote'],['holiday_note','holidayNote']].forEach(([key,id]) => {
+    if (typeof s[key] === 'string') document.getElementById(id).textContent = s[key];
+  });
+  const address = [document.getElementById('addr1').textContent, document.getElementById('addr2').textContent].join(', ');
+  document.querySelectorAll('[data-directions]').forEach(el =>
+    el.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(address));
+  const mode = s.opening_mode === 'permanent' ? 'permanent' : 'soft';
+  HOURS = scheduleFor(s, mode);
+  document.getElementById('hoursLabel').textContent = mode === 'permanent' ? 'Store hours' : 'Soft opening hours';
+  const future = document.getElementById('futureHours');
+  future.hidden = mode === 'permanent';
+  future.textContent = 'Future permanent hours: ' + scheduleSummary(scheduleFor(s,'permanent')) + '. Soft opening hours are in effect now.';
+  renderHours();
+  updateStoreMetadata(s,mode);
+}
 
 /* Settings */
 fetch('/content/settings.json', {cache:'no-store'})
-  .then(r => r.json())
-  .then(s => {
-    const ribbon = document.getElementById('ribbon');
-    if (s.ribbon_on && s.ribbon_text){
-      const txt = esc(s.ribbon_text);
-      ribbon.innerHTML = `<span aria-hidden="true">${txt}</span>`.repeat(3);
-      ribbon.setAttribute('aria-label', s.ribbon_text);
-      ribbon.hidden = false;
-    }
-
-    if (s.eyebrow){
-      document.getElementById('eyebrow').textContent = s.eyebrow;
-      document.querySelectorAll('.tickArrivals').forEach(el => el.textContent = s.eyebrow);
-    }
-
-    if (s.whatnot_url){
-      ['whatnotBtn','whatnotFoot'].forEach(id => {
-        const el = document.getElementById(id);
-        el.href = s.whatnot_url;
-        el.hidden = false;
-      });
-    }
-
-    const lines = [];
-    if (s.phone) lines.push(`<a href="tel:${esc(s.phone.replace(/[^0-9+]/g,''))}">${esc(s.phone)}</a>`);
-    if (s.email) lines.push(`<a href="mailto:${esc(s.email)}">${esc(s.email)}</a>`);
-    if (lines.length) document.getElementById('contactLines').innerHTML = '<br><br>' + lines.join('<br>');
-
-    /* Hero copy */
-    if (s.hero_headline){
-      const em = s.hero_emphasis;
-      let out = esc(s.hero_headline);
-      if (em && s.hero_headline.includes(em)){
-        out = out.replace(esc(em), '<em>' + esc(em) + '</em>');
-      }
-      document.getElementById('heroHeadline').innerHTML = out;
-    }
-    if (s.hero_sub) document.getElementById('heroSub').textContent = s.hero_sub;
-
-    /* Address & notes */
-    if (s.address_line1) document.getElementById('addr1').textContent = s.address_line1;
-    if (s.address_line2) document.getElementById('addr2').textContent = s.address_line2;
-    if (s.store_note)   document.getElementById('storeNote').textContent = s.store_note;
-    if (s.holiday_note) document.getElementById('holidayNote').textContent = s.holiday_note;
-
-    /* Store hours */
-    if (Array.isArray(s.hours) && s.hours.length){
-      const order = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-      const byDay = {};
-      s.hours.forEach(r => { if (r && r.day) byDay[String(r.day).trim()] = r; });
-      const built = order.map(name => {
-        const r = byDay[name];
-        if (!r || r.closed) return {d:name, open:null, close:null};
-        const o = parseTime(r.open), c = parseTime(r.close);
-        if (o === null || c === null) return {d:name, open:null, close:null};
-        return {d:name, open:o, close:c};
-      });
-      if (built.some(r => r.open !== null)){
-        HOURS = built;
-        renderHours();
-      }
-    }
-  })
+  .then(r => { if (!r.ok) throw new Error('Settings unavailable'); return r.json(); })
+  .then(applySettings)
   .catch(() => {});
 
 document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
 </body>
 </html>
+
 
 
 
