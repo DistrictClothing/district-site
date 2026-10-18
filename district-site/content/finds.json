@@ -34,7 +34,7 @@
     },
     {
       "photo": "/images/uploads/unnamed-4-.jpg",
-      "category": "Men",
+      "category": "Men’s Graphic Tees",
       "name": "Men’s Oversized Faith Graphic Tee",
       "compare": "45.99",
       "price": "21.99",
@@ -42,10 +42,10 @@
     },
     {
       "photo": "/images/uploads/gemini_generated_image_5jml5a5jml5a5jml-1-.jpg",
-      "category": "Men's Hoodies",
-      "name": "Graphic Hoodies",
-      "price": "19.99",
-      "compare": "29.99"
+      "category": "Men’s Graphic Tees",
+      "name": "Men’s Rhinestone Angel Warrior Graphic Tee",
+      "price": "21.99",
+      "compare": "59.99"
     }
   ]
 }
