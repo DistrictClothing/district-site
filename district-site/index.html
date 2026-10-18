@@ -91,6 +91,11 @@ img{max-width:100%;display:block}
 .hdr{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
 .hdr-in{display:flex;align-items:center;justify-content:space-between;gap:24px;height:74px}
 .hdr .lockup{--lk:26px}
+.hdr-actions{display:flex;align-items:center;gap:20px;margin-left:auto}
+.instagram-link{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;flex:0 0 44px;color:var(--ink);border-radius:50%;transition:color .18s,background .18s}
+.instagram-link:hover{color:var(--pink-deep);background:var(--paper-2)}
+.instagram-link svg{width:22px;height:22px}
+@media(max-width:600px){.hdr-in{gap:12px}.hdr .lockup{--lk:20px}.hdr-actions{gap:4px}}
 .nav{display:flex;align-items:center;gap:30px}
 .nav a{
   text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
@@ -106,7 +111,7 @@ img{max-width:100%;display:block}
 .nav .now.shut .dot{background:var(--gray)}
 .burger{display:none;background:none;border:0;padding:8px;cursor:pointer}
 .burger span{display:block;width:24px;height:3px;background:var(--ink);margin:4px 0;border-radius:1px}
-@media(max-width:900px){
+@media(max-width:1000px){
   .nav a,.nav .now{display:none}
   .burger{display:block}
   .nav.open{position:absolute;top:74px;left:0;right:0;background:var(--paper);border-bottom:1px solid var(--rule);flex-direction:column;align-items:flex-start;gap:0;padding:8px var(--pad) 22px}
@@ -315,7 +320,7 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
       <span class="wm"><span class="wm-main">District</span><span class="wm-sub">Clothing and More</span></span>
       <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>
     </a>
-    <button class="burger" aria-label="Menu" aria-expanded="false" aria-controls="nav"><span></span><span></span><span></span></button>
+    <div class="hdr-actions">
     <nav class="nav" id="nav">
       <a href="#deals">Finds</a>
       <a href="#depts">Departments</a>
@@ -323,6 +328,15 @@ a.chip:hover{background:var(--pink);border-color:var(--pink);color:#fff}
       <a href="#jobs">Careers</a>
       <span class="now" id="openNow"><span class="dot"></span><b>—</b></span>
     </nav>
+    <button class="burger" aria-label="Menu" aria-expanded="false" aria-controls="nav"><span></span><span></span><span></span></button>
+      <a class="instagram-link" id="instagramHeader" target="_blank" rel="noopener" aria-label="Follow District Clothing on Instagram (opens in a new tab)" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false">
+          <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+          <circle cx="12" cy="12" r="4"></circle>
+          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle>
+        </svg>
+      </a>
+    </div>
   </div>
 </header>
 
@@ -771,7 +785,7 @@ function applySettings(s){
   const announcement = document.getElementById('announcement');
   announcement.textContent = typeof s.announcement === 'string' ? s.announcement : '';
   announcement.hidden = !announcement.textContent.trim();
-  [['whatnot_url',['whatnotBtn','whatnotFoot']], ['instagram_url',['instagramFoot']],
+  [['whatnot_url',['whatnotBtn','whatnotFoot']], ['instagram_url',['instagramHeader','instagramFoot']],
    ['facebook_url',['facebookFoot']], ['tiktok_url',['tiktokFoot']]].forEach(([key, ids]) => {
     const url = safeWebUrl(s[key]);
     ids.forEach(id => {
